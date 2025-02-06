@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<!-- 
+网站配置说明：
+1. 基本信息配置
+   - 修改 <title> 标签中的网站标题
+   - 修改 favicon.svg 为你的网站图标
+   - 修改 style.css 为你的自定义样式文件
+   - 修改 meta 标签中的描述和关键词
+   - 修改 Open Graph 和 Twitter Card 标签中的信息
+
+2. 背景配置
+   - matrix 画布背景可以在 style 标签中修改
+   - 如果不需要动态背景，可以删除 canvas 元素和相关的 JavaScript 代码
+
+3. 个人信息配置
+   - 替换 image/avatar.jpg 为你的头像
+   - 修改 <h1> 标签中的名字
+   - 修改 .bio 类中的个性签名
+   - 比特币地址部分可以删除或替换为其他内容
+
+4. 社交媒体配置
+   - 在 .social-links 中添加或删除社交媒体链接
+   - 每个 .social-item 都可以自定义图标（SVG）、标题和描述
+   - 微信公众号二维码可以替换 image/qr-code.jpg
+
+5. 作品展示配置
+   - 在 .project-grid 中添加或删除作品展示
+   - 替换项目图片、标题、描述和链接
+
+6. 留言板配置
+   - 如果不需要留言板功能，可以删除 .comments 相关代码
+   - 要使用留言板，需要：
+     1. 保留 twikoo 相关代码
+     2. 将 envId 修改为你的部署地址
+     3. 如果不使用 twikoo，可以替换为其他评论系统
+
+7. 页脚配置
+   - 修改版权信息
+   - 根据需要修改或删除备案号
+
+8. SEO配置
+   - 修改 meta description 和 keywords
+   - 修改 Open Graph 和 Twitter Card 标签中的信息
+   - 根据需要添加其他 meta 标签
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小吴乐意-社交主页</title>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="小吴乐意的个人社交主页，分享技术、生活和思考。作为一名技术作者，我致力于探索和分享比特币等区块链技术的知识。">
+    <meta name="keywords" content="小吴乐意,比特币,比特币,区块链,技术博客,个人主页">
+    <meta name="author" content="小吴乐意">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="小吴乐意-社交主页">
+    <meta property="og:description" content="小吴乐意的个人社交主页，分享技术、生活和思考。作为一名技术作者，我致力于探索和分享比特币等区块链技术的知识。">
+    <meta property="og:image" content="image/avatar.jpg">
+    <meta property="og:url" content="https://xiaowuleyi.com">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@xiaowuleyi">
+    <meta name="twitter:title" content="小吴乐意-社交主页">
+    <meta name="twitter:description" content="小吴乐意的个人社交主页，分享技术、生活和思考。作为一名技术作者，我致力于探索和分享比特币等区块链技术的知识。">
+    <meta name="twitter:image" content="image/avatar.jpg">
+    
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        #matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #1a1a2e);
+        }
+        .container {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px auto;
+            max-width: 800px;
+        }
+        .comments {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        .comments .section-title {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        #tcomment {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix"></canvas>
+    <div class="container">
+        <div class="profile">
+            <img src="image/avatar.jpg" alt="头像" class="avatar">
+            <h1>小吴乐意</h1>
+            <p class="bio">“未来的种子，深埋在过去。”</p>
+            <div class="btc-address" id="btc-address">
+                <span>BTC: 3KLy733p6vQDyaKdEY61iGdQPf9pYt9hPv</span>
+                <div class="qr-code btc-qr">
+                    <img src="image/btc-qr.jpg" alt="比特币地址二维码">
+                </div>
+            </div>
+        </div>
+        
+        <div class="social-links">
+            <a href="https://blog.xiaowuleyi.com" class="social-item blog" target="_blank">
+                <div class="icon"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M21.469 6.825c.84 1.537 1.318 3.3 1.318 5.175 0 3.979-2.156 7.456-5.363 9.325l3.295-9.527c.615-1.54.82-2.771.82-3.864 0-.405-.026-.78-.07-1.11m-7.981.105c.647-.03 1.232-.105 1.232-.105.582-.075.514-.93-.067-.899 0 0-1.755.135-2.88.135-1.064 0-2.85-.15-2.85-.15-.585-.03-.661.855-.075.885 0 0 .54.061 1.125.09l1.68 4.605-2.37 7.08L5.354 6.9c.649-.03 1.234-.1 1.234-.1.585-.075.516-.93-.065-.896 0 0-1.746.138-2.874.138-.2 0-.438-.008-.69-.015C4.911 3.15 8.235 1.215 12 1.215c2.809 0 5.365 1.072 7.286 2.833-.046-.003-.091-.009-.141-.009-1.06 0-1.812.923-1.812 1.914 0 .89.513 1.643 1.06 2.531.411.72.89 1.643.89 2.977 0 .915-.354 1.994-.821 3.479l-1.075 3.585-3.9-11.61.001.014zM12 22.784c-1.059 0-2.081-.153-3.048-.437l3.237-9.406 3.315 9.087c.024.053.05.101.078.149-1.12.393-2.325.609-3.582.609M1.211 12c0-1.564.336-3.05.935-4.39L7.29 21.709C3.694 19.96 1.212 16.271 1.211 12M12 0C5.385 0 0 5.385 0 12s5.385 12 12 12 12-5.385 12-12S18.615 0 12 0"/></svg></div>
+                <div class="text">
+                    <h3>个人博客</h3>
+                    <p>分享技术文章和生活感悟</p>
+                </div>
+                <div class="arrow">›</div>
+            </a>
+            
+            <a href="https://x.com/xiaowuleyi" class="social-item twitter" target="_blank">
+                <div class="icon"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></div>
+                <div class="text">
+                    <h3>Twitter(X)</h3>
+                    <p>自由世界，自由言论</p>
+                </div>
+                <div class="arrow">›</div>
+            </a>
+            
+            <a href="https://weibo.com/u/3922725757" class="social-item weibo" target="_blank">
+                <div class="icon"><svg viewBox="0 0 1024 1024" width="24" height="24"><path fill="currentColor" d="M851.4 590.193c-22.196-66.233-90.385-90.422-105.912-91.863-15.523-1.442-29.593-9.94-19.295-27.505 10.302-17.566 29.304-68.684-7.248-104.681-36.564-36.14-116.512-22.462-173.094 0.866-56.434 23.327-53.39 7.055-51.65-8.925 1.89-16.848 32.355-111.02-60.791-122.395C311.395 220.86 154.85 370.754 99.572 457.15 16 587.607 29.208 675.873 29.208 675.873h0.58c10.009 121.819 190.787 218.869 412.328 218.869 190.5 0 350.961-71.853 398.402-169.478 0 0 0.143-0.433 0.575-1.156 4.938-10.506 8.71-21.168 11.035-32.254 6.668-26.205 11.755-64.215-0.728-101.66z m-436.7 251.27c-157.71 0-285.674-84.095-285.674-187.768 0-103.671 127.82-187.76 285.674-187.76 157.705 0 285.673 84.089 285.673 187.76 0 103.815-127.968 187.768-285.673 187.768z m0 0"/><path fill="currentColor" d="M803.096 425.327c2.896 1.298 5.945 1.869 8.994 1.869 8.993 0 17.7-5.328 21.323-14.112 5.95-13.964 8.993-28.793 8.993-44.205 0-62.488-51.208-113.321-114.181-113.321-15.379 0-30.32 3.022-44.396 8.926-11.755 4.896-17.263 18.432-12.335 30.24 4.933 11.662 18.572 17.134 30.465 12.238 8.419-3.46 17.268-5.33 26.41-5.33 37.431 0 67.752 30.241 67.752 67.247 0 9.068-1.735 17.857-5.369 26.202a22.832 22.832 0 0 0 12.335 30.236l0.01 0.01z m0 0"/><path fill="currentColor" d="M726.922 114.157c-25.969 0-51.65 3.744-76.315 11.23-18.423 5.615-28.724 24.927-23.07 43.42 5.657 18.493 24.968 28.727 43.53 23.111 17.416-5.326 35.837-8.084 54.722-8.084 101.216 0 183.404 82.182 183.404 183.395 0 19.017-2.89 37.578-8.559 55.165-6.088 18.638 4.036 38.655 22.709 44.848 3.662 1.082 7.324 1.645 10.977 1.645 15.086 0 28.877-9.647 33.886-24.126 7.757-24.136 11.697-49.355 11.697-75.072C980.033 218.989 865.219 114.157 726.922 114.157z m0 0"/><path fill="currentColor" d="M388.721 534.959c-84.92 0-153.737 69.381-153.737 154.723 0 85.486 68.817 154.736 153.737 154.736 84.92 0 153.737-69.25 153.737-154.736 0-85.342-68.817-154.723-153.737-154.723z m0 247.575c-51.099 0-92.373-41.42-92.373-92.852 0-51.432 41.274-92.84 92.373-92.84 51.1 0 92.374 41.408 92.374 92.84 0 51.432-41.274 92.852-92.374 92.852z m0 0"/><path fill="currentColor" d="M484.914 546.832c-13.104-22.989-44.842-42.376-90.978-42.376-42.022 0-75.189 13.538-100.44 40.47-21.737 23.089-27.399 46.182-29.42 54.273-2.459 9.935 0 10.249 0 10.249s-0.719 4.475 0.144 9.361c2.45 13.538 13.095 41.04 20.616 54.272 15.705 27.852 51.099 64.248 97.92 64.248 39.419 0 71.774-20.475 86.75-34.722 14.977-14.24 28.936-33.577 36.264-57.845 6.75-22.415 1.735-75.473-20.856-97.93z m-91.401 154.723c-19.853 0-35.989-16.14-35.989-35.989 0-19.993 16.137-35.989 35.989-35.989s35.989 16.137 35.989 35.989c0 19.849-16.137 35.989-35.989 35.989z m0 0"/></svg></div>
+                <div class="text">
+                    <h3>微博</h3>
+                    <p>围观改变世界了吗？</p>
+                </div>
+                <div class="arrow">›</div>
+            </a>
+            
+            <a href="https://space.bilibili.com/68332732" class="social-item bilibili" target="_blank">
+                <div class="icon"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M17.813 4.653h.854c1.51.054 2.769.578 3.773 1.574 1.004.995 1.524 2.249 1.56 3.76v7.36c-.036 1.51-.556 2.769-1.56 3.773s-2.262 1.524-3.773 1.56H5.333c-1.51-.036-2.769-.556-3.773-1.56S.036 18.858 0 17.347v-7.36c.036-1.511.556-2.765 1.56-3.76 1.004-.996 2.262-1.52 3.773-1.574h.774l-1.174-1.12a1.234 1.234 0 0 1-.373-.906c0-.356.124-.658.373-.907l.027-.027c.267-.249.573-.373.92-.373.347 0 .653.124.92.373L9.653 4.44c.071.071.134.142.187.213h4.267a.836.836 0 0 1 .16-.213l2.853-2.747c.267-.249.573-.373.92-.373.347 0 .662.151.929.4.267.249.391.551.391.907 0 .355-.124.657-.373.906zM5.333 7.24c-.746.018-1.373.276-1.88.773-.506.498-.769 1.13-.786 1.894v7.52c.017.764.28 1.395.786 1.893.507.498 1.134.756 1.88.773h13.334c.746-.017 1.373-.275 1.88-.773.506-.498.769-1.129.786-1.893v-7.52c-.017-.765-.28-1.396-.786-1.894-.507-.497-1.134-.755-1.88-.773zM8 11.107c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c0-.373.129-.689.386-.947.258-.257.574-.386.947-.386zm8 0c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c.017-.391.15-.711.4-.96.249-.249.56-.373.933-.373z"/></svg></div>
+                <div class="text">
+                    <h3>哔哩哔哩</h3>
+                    <p>传说中的“B”站</p>
+                </div>
+                <div class="arrow">›</div>
+            </a>
+            
+            <a href="https://v.douyin.com/ifEHDvAx" class="social-item douyin" target="_blank">
+                <div class="icon"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg></div>
+                <div class="text">
+                    <h3>抖音</h3>
+                    <p>记录生活与思考</p>
+                </div>
+                <div class="arrow">›</div>
+            </a>
+            
+            <a href="https://www.youtube.com/@xiaowuleyi" class="social-item youtube" target="_blank">
+                <div class="icon"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></div>
+                <div class="text">
+                    <h3>YouTube</h3>
+                    <p>偶尔放飞自我</p>
+                </div>
+                <div class="arrow">›</div>
+            </a>
+
+            <a href="#" class="social-item wechat" id="wechat-item" target="_blank">
+                <div class="icon"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 0 0 .167-.054l1.903-1.114a.864.864 0 0 1 .717-.098 10.16 10.16 0 0 0 2.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178A1.17 1.17 0 0 1 4.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178 1.17 1.17 0 0 1-1.162-1.178c0-.651.52-1.18 1.162-1.18zm5.34 2.867c-1.797-.052-3.746.512-5.28 1.786-1.72 1.428-2.687 3.72-1.78 6.22.942 2.453 3.666 4.229 6.884 4.229.826 0 1.622-.12 2.361-.336a.722.722 0 0 1 .598.082l1.584.926a.272.272 0 0 0 .14.047c.134 0 .24-.111.24-.247 0-.06-.023-.12-.038-.177l-.327-1.233a.582.582 0 0 1-.023-.156.49.49 0 0 1 .201-.398C23.024 18.48 24 16.82 24 14.98c0-3.21-2.931-5.837-6.656-6.088V8.89c-.135-.01-.27-.027-.407-.03zm-2.53 3.274c.535 0 .969.44.969.982a.976.976 0 0 1-.969.983.976.976 0 0 1-.969-.983c0-.542.434-.982.97-.982zm4.844 0c.535 0 .969.44.969.982a.976.976 0 0 1-.969.983.976.976 0 0 1-.969-.983c0-.542.434-.982.969-.982z"/></svg></div>
+                <div class="text">
+                    <h3>公众号：小吴乐意</h3>
+                    <p>日拱一卒，功不唐捐</p>
+                </div>
+                <div class="arrow">›</div>
+                <div class="qr-code">
+                    <img src="image/qr-code.jpg" alt="公众号二维码">
+                </div>
+            </a>
+
+            <a href="https://t.me/xiaowuly" class="social-item telegram" target="_blank">
+                <div class="icon"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></div>
+                <div class="text">
+                    <h3>Telegram</h3>
+                    <p>偶尔的碎碎念罢了</p>
+                </div>
+                <div class="arrow">›</div>
+            </a>
+        </div>
+
+        <div class="projects">
+            <h2 class="section-title">我的作品</h2>
+            <div class="project-grid">
+                <a href="https://mp.weixin.qq.com/s/VvepyYr5kPsIA5Kj6VSkmg" class="project-item" target="_blank">
+                    <div class="project-image">
+                        <img src="image/book-cover.jpg" alt="书籍封面">
+                    </div>
+                    <div class="project-info">
+                        <h3>《通往比特币之路》</h3>
+                        <p>一本适合了解比特币的入门参考</p>
+                        <span class="project-tag">技术书籍</span>
+                    </div>
+                </a>
+                <a href="https://xiaowu2.notion.site/18f99109b9cf8097be31ecff0a4a6489?pvs=4" class="project-item" target="_blank">
+                    <div class="project-image">
+                        <img src="image/list-cover.jpg" alt="清单封面">
+                    </div>
+                    <div class="project-info">
+                        <h3>《小吴乐意的个人清单》</h3>
+                        <p>我的个人知识管理和生活记录</p>
+                        <span class="project-tag">个人清单</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="comments">
+            <h2 class="section-title">留言板</h2>
+            <div id="tcomment"></div>
+        </div>
+        <div class="copyright">
+            © 2025 小吴乐意. All Rights Reserved.
+        </div>
+    </div>
+    <script src="https://cdn.staticfile.org/twikoo/1.6.31/twikoo.all.min.js"></script>
+    <script>
+        twikoo.init({
+            envId: 'https://pl.xiaowuleyi.com',
+            el: '#tcomment'
+        });
+
+        // 添加比特币地址复制功能
+        document.getElementById('btc-address').addEventListener('click', function() {
+            const btcAddress = '3KLy733p6vQDyaKdEY61iGdQPf9pYt9hPv';
+            const copySuccess = document.createElement('div');
+            copySuccess.className = 'copy-success';
+            copySuccess.textContent = '地址已复制';
+            this.appendChild(copySuccess);
+            
+            navigator.clipboard.writeText(btcAddress).then(function() {
+                copySuccess.classList.add('show');
+                setTimeout(() => {
+                    copySuccess.classList.remove('show');
+                    setTimeout(() => copySuccess.remove(), 300);
+                }, 1500);
+            }).catch(function(err) {
+                console.error('复制失败:', err);
+                copySuccess.textContent = '复制失败';
+                copySuccess.classList.add('show');
+                setTimeout(() => {
+                    copySuccess.classList.remove('show');
+                    setTimeout(() => copySuccess.remove(), 300);
+                }, 1500);
+            });
+        });
+
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const stars = [];
+        const numStars = 200;
+        const nebulas = [];
+        const numNebulas = 3;
+
+        // 创建星星
+        for (let i = 0; i < numStars; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 2,
+                speed: Math.random() * 0.5 + 0.1,
+                brightness: Math.random() * 0.3 + 0.7, // 初始化时使用随机值
+            });
+        }
+
+        // 创建星云
+        for (let i = 0; i < numNebulas; i++) {
+            nebulas.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 200 + 100,
+                hue: Math.random() * 60 + 200, // 蓝紫色系
+                opacity: Math.random() * 0.2
+            });
+        }
+
+        function drawStar(star) {
+            ctx.beginPath();
+            ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 255, 255, ${0.3 + star.brightness * 0.7})`;
+            ctx.fill();
+        }
+
+        function drawNebula(nebula) {
+            const gradient = ctx.createRadialGradient(
+                nebula.x, nebula.y, 0,
+                nebula.x, nebula.y, nebula.size
+            );
+            gradient.addColorStop(0, `hsla(${nebula.hue}, 100%, 50%, ${nebula.opacity})`);
+            gradient.addColorStop(1, 'transparent');
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(nebula.x - nebula.size, nebula.y - nebula.size,
+                        nebula.size * 2, nebula.size * 2);
+        }
+
+        function updateStars() {
+            stars.forEach(star => {
+                star.y -= star.speed;
+                if (star.y < -10) {
+                    star.y = canvas.height + 10;
+                    star.x = Math.random() * canvas.width;
+                }
+                star.brightness = Math.sin(Date.now() * 0.001 + star.speed * 10) * 0.3 + 0.7;
+            });
+        }
+
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 15, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            nebulas.forEach(drawNebula);
+            stars.forEach(drawStar);
+            updateStars();
+
+            requestAnimationFrame(draw);
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        draw();
+    </script>
+</body>
+</html>
